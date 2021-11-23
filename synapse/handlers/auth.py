@@ -62,7 +62,6 @@ from synapse.http.server import finish_request, respond_with_html
 from synapse.http.site import SynapseRequest
 from synapse.logging.context import defer_to_thread
 from synapse.metrics.background_process_metrics import run_as_background_process
-from synapse.module_api import ModuleApi
 from synapse.storage.roommember import ProfileInfo
 from synapse.types import JsonDict, Requester, UserID
 from synapse.util import stringutils as stringutils
@@ -73,6 +72,7 @@ from synapse.util.stringutils import base62_encode
 from synapse.util.threepids import canonicalise_email
 
 if TYPE_CHECKING:
+    from synapse.module_api import ModuleApi
     from synapse.rest.client.login import LoginResponse
     from synapse.server import HomeServer
 
@@ -1818,7 +1818,9 @@ def load_legacy_password_auth_providers(hs: "HomeServer") -> None:
 
 
 def load_single_legacy_password_auth_provider(
-    module: Type, config: JsonDict, api: ModuleApi
+    module: Type,
+    config: JsonDict,
+    api: "ModuleApi",
 ) -> None:
     try:
         provider = module(config=config, account_handler=api)
@@ -1987,7 +1989,9 @@ class PasswordAuthProvider:
         self,
         check_3pid_auth: Optional[CHECK_3PID_AUTH_CALLBACK] = None,
         on_logged_out: Optional[ON_LOGGED_OUT_CALLBACK] = None,
-        auth_checkers: Optional[Dict[Tuple[str, Tuple], CHECK_AUTH_CALLBACK]] = None,
+        auth_checkers: Optional[
+            Dict[Tuple[str, Tuple[str, ...]], CHECK_AUTH_CALLBACK]
+        ] = None,
     ) -> None:
         # Register check_3pid_auth callback
         if check_3pid_auth is not None:
