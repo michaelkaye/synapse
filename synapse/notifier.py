@@ -451,6 +451,7 @@ class Notifier:
                 "receipt_key",
                 "presence_key",
                 "to_device_key",
+                "device_list_key",
             ):
                 # Notify appservices.
                 try:
