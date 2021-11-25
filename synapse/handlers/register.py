@@ -812,7 +812,10 @@ class RegistrationHandler:
             assert valid_until_ms is None
             access_token = self.macaroon_gen.generate_guest_access_token(user_id)
         else:
-            if should_issue_refresh_token:
+            if (
+                should_issue_refresh_token
+                and self.refreshable_access_token_lifetime is not None
+            ):
                 now_ms = self.clock.time_msec()
 
                 # Set the refresh token expiry time (if configured)
